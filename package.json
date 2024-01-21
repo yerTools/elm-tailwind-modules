@@ -25,6 +25,7 @@
     "color-name": "^1.1.4",
     "commander": "^7.2.0",
     "css-what": "^5.0.0",
+    "daisyui": "^4.6.0",
     "deep-equal": "^2.0.3",
     "fs-extra": "^9.1.0",
     "lodash": "^4.17.21",
