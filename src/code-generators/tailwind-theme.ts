@@ -74,6 +74,12 @@ function generateColors(expandedColors: [string, string][], docs: DocumentationG
             const parsedColor = color.parseColor(colorValue);
 
             if (parsedColor == null) {
+                const alphaValueIndex = colorValue.indexOf("<alpha-value>");
+                if (alphaValueIndex !== -1) {
+                    colorValue = colorValue.slice(0, alphaValueIndex) + 
+                        "1" + colorValue.slice(alphaValueIndex + "<alpha-value>".length);
+                }
+
                 return `Tw.Keyword "${colorValue}"`;
             }
 
