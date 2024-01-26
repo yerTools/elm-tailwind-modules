@@ -32,6 +32,17 @@ export interface DocumentationGenerator {
     utilitiesParameterizedDefinition: (name: string, declaration: ParameterizedDeclaration) => string;
 
     /**
+     * Called for every generated tailwind class with a utility definition.
+     * The output string can be empty or otherwise has to contain the `{-|` and `-}` parts.
+     */
+    classesWithUtilityDefinition: (name: string, declaration: RecognizedDeclaration) => string;
+    /**
+     * Called for every generated tailwind class without any utility definition.
+     * The output string can be empty or otherwise has to contain the `{-|` and `-}` parts.
+     */
+    classesWithoutUtilityDefinition: (name: string, originalClassName: string) => string;
+
+    /**
      * Choose the order of definitions in the `exposing` clause for the breakpoints module.
      * `null` indicates that `exposing (..)` should be generated.
      */
@@ -64,6 +75,9 @@ export const noDocumentationGenerator: DocumentationGenerator = {
     utilitiesGlobalStyles: () => "",
     utilitiesDefinition: (_name, _declaration) => "",
     utilitiesParameterizedDefinition: (_name, _declaration) => "",
+
+    classesWithUtilityDefinition: (_name, _declaration) => "",
+    classesWithoutUtilityDefinition: (_name, _originalClassName) => "",
 
     breakpointsExposing: _definedNames => null,
     breakpointsModuleDocs: _definedNames => null,
@@ -144,6 +158,32 @@ ${replaceOriginalColorsWithPlaceholder(declaration.originalRules.map(rule => rul
 \`\`\`
 
 The \`<color>\` can be chosen with the first parameter.
+
+Make sure to check out the [tailwind documentation](https://tailwindcss.com/docs)!
+
+-}`,
+
+    classesWithUtilityDefinition: (_name, declaration) => `
+{-| This function adds the class ${
+    JSON.stringify(declaration.originalClassName)
+} to the element and ${declaration.originalRules.length > 1
+            ? "combines the effects of following css declarations:"
+            : "has the effect of following css declaration:"
+        }
+
+\`\`\`css
+${declaration.originalRules.map(rule => rule.toString()).join("\n\n")}
+\`\`\`
+
+Make sure to check out the [tailwind documentation](https://tailwindcss.com/docs)!
+
+-}`,
+
+    classesWithoutUtilityDefinition: (_name, originalClassName) => `
+{-| This function only adds the class ${
+    JSON.stringify(originalClassName)
+} to the element but has no direct effect on the element's styling.  
+This can be useful if the class name is used in the global styles.
 
 Make sure to check out the [tailwind documentation](https://tailwindcss.com/docs)!
 
