@@ -99,7 +99,12 @@ export function groupDeclarationBlocksByClass(
                     return;
                 }
 
-                logFunction("Encountered unknown @-rule: " + child.name);
+                if (child.name === "supports" && child.params.indexOf("not") !== 0){
+                    child.walkRules(rule => handleRule(null, rule));
+                    return;
+                }
+
+                logFunction("Encountered unknown @-rule: " + child.name + " (" + child.params + ")");
                 return;
 
 
